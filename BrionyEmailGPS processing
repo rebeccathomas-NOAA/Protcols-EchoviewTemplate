@@ -1,0 +1,188 @@
+Awesome, thanks Steve.
+
+ 
+
+A quick first look using Echoview 11.1.49 and I see stuck positions too – but it’s not so much that they are stuck and Echoview is not updating, rather the underlying GPS variable that’s being used is problematic. This is indicated by the lower magenta strip (position status) and mostly red strip (fix status) that are shown on the bottom of the echogram:
+
+ 
+
+If you find the GPS variable that’s being used by the platform, which is called “position GPS fixes (1)”, and then look at its Variable Properties you’ll see that this variable is made up of an aggregate of multiple GPS sources:
+
+ 
+
+If you right-click on this variable and select Table, you’ll see details for all fixes in the variable:
+
+ 
+
+In this list you’ll see that the fixes from the GPRMB source are very different to the other sources, and because (in this file at least) the very first time-ordered fix is from that source, the overall cruise track is relative to that first fix, and therefore ends up quite confused because it jumps back and forth from very different locations.
+
+ 
+
+There are two ways to solve this:
+
+    Open Variable Properties for the GPS variable and view the Data page, and change the Processing method to Method 2. This method groups the good GPS fixes and displays a cruise track starting with the first good GPS fix, which is helpful when your first GPS fix is dodgy.
+
+ 
+
+    Change to using a different GPS variable with your Platform. The “position GPS fixes” variable is an aggregate variable, and so problems like this aren’t uncommon. The GPGGA source tends to be quite reliable, and if you change to using this instead then you’ll see GPS updating as expected, because the underlying track is OK. The variable can be changed in Platform Properties on the Position page using the setting called Position source. 
+
+ 
+
+After you do either of these, you’ll see the strips at the bottom of the echogram update to a happy green:
+
+ 
+
+I’d recommend using option 2, especially if you know that there’s one GPS source that is most reliable.
+
+ 
+
+In Echoview 12, we’ve actually updated Echoview to no longer use the aggregate GPS as the default variable to be used by the platform, for reasons just like this!
+
+ 
+
+Cheers,
+
+Briony
+
+ 
+
+
+Ms Briony Hutton | Product Manager
+Tel +61 3 6231 5588 | USA +1 206 691 8293
+briony.hutton@echoview.com | echoview.com
+
+ 
+
+From: Steve de Blois - NOAA Federal <steve.deblois@noaa.gov>
+Sent: Wednesday, 10 November 2021 11:20 AM
+To: Briony Hutton <briony.hutton@echoview.com>
+Cc: Rebecca Thomas - NOAA Federal <rebecca.thomas@noaa.gov>; Julia Clemons - NOAA Federal <julia.clemons@noaa.gov>
+Subject: Re: EV file with stuck position
+
+ 
+
+Hello Biony,
+
+ 
+
+Wow -- thanks for the amazingly quick reply!
+
+ 
+
+1.  Sorry for not being clearer -- creating a new EV file was via live viewing.
+
+2.  EV files were created using a template.
+
+3.  We used Echoview 11.1.49 out at sea.  Rebecca Thomas created the EV file I shared with you -- maybe her PC is running 11.1.34?  (Rebecca -- please correct me if I'm wrong!)
+
+4.  The position was getting stuck when viewing Sv pings echograms in four frequencies (18, 38, 70, and 120 kHz).
+
+5.  Generally, we didn't have the Details panel open, but when I open it up now with x8badlat.EV, the position is stuck there too.
+
+ 
+
+Thanks -- Steve
+
+ 
+
+On Tue, Nov 9, 2021 at 4:01 PM Briony Hutton <briony.hutton@echoview.com> wrote:
+
+    Hi Steve,
+
+     
+
+    Thanks for sharing some example data files. We haven’t come across this one yet, I don’t think. A couple of quick questions to help us investigate further:
+
+     
+
+        When you created a new EV file in the morning and started using the first raw file, was that via live viewing or just regular usage?
+        Did you create a new EV file from scratch, or using a template, or did you use an existing EV file and removed all data then add new data?
+        The EV file that you shared was last saved in Echoview 11.1.34 – is that still the most recent version that you used?
+        Was the position getting stuck when viewing any echogram, or were you only looking at specific variables?  (raw variables vs virtual variables might be particularly helpful to identify)
+        Position can also be shown in the Details panel. Do you recall if you had this open, if the position value also got stuck there too? 
+
+     
+
+    Cheers,
+
+    Briony
+
+     
+
+
+    Ms Briony Hutton | Product Manager
+    Tel +61 3 6231 5588 | USA +1 206 691 8293
+    briony.hutton@echoview.com | echoview.com
+
+     
+
+    From: Steve de Blois - NOAA Federal <steve.deblois@noaa.gov>
+    Sent: Wednesday, 10 November 2021 10:46 AM
+    To: Echoview Support <support@echoview.com>
+    Cc: Rebecca Thomas - NOAA Federal <rebecca.thomas@noaa.gov>; Julia Clemons - NOAA Federal <julia.clemons@noaa.gov>
+    Subject: EV file with stuck position
+
+     
+
+    Hello Echoview,
+
+     
+
+    Our team with the Northwest Fisheries Science Center, NOAA encountered a glitch last summer while conducting our Pacific hake acoustic-trawl survey.  There were a few times when the position (lat/long) displayed in the bottom right corner, associated with where the cursor was in the Echogram, was fixed/locked and would not change, regardless of where the cursor was on the Echogram.  And, the latitude of this fixed position was further south than the survey had ever been (latitude was locked at 30 56.994 N).  Time, however, changed just fine with cursor movement.
+
+     
+
+    My recollection is that this position locking happened most frequently first thing in the morning, when we created a new EV file for the day and started using the first RAW file of the day.  But not always.
+
+     
+
+    What seemed to solve this problem was to remove that first RAW file of the day from the Filesets.  Latitude and longitude then varied with cursor position, as usual.
+
+     
+
+    I've loaded an EV file and two RAW files into a Google Drive to show the issue:
+
+     
+
+    https://drive.google.com/drive/folders/1oQLgZ17y7xJFoiz3mhno08DmNHou_Gs4
+
+     
+
+    Please let me know if sharing didn't work properly.
+
+     
+
+    Our team is interested in learning if Echoview has heard of this issue before, and if there's anything that can be done to stop it from occurring.
+
+     
+
+    Thank you!
+
+     
+
+    -- 
+
+    Steve de Blois
+
+    Fishery Biologist, Fisheries Engineering and Acoustic Technologies
+
+    NOAA Fisheries, Northwest Fisheries Science Center
+
+    2725 Montlake Blvd. E, Seattle, WA  98112
+
+    Office: (206) 860-3478
+
+
+ 
+
+-- 
+
+Steve de Blois
+
+Fishery Biologist, Fisheries Engineering and Acoustic Technologies
+
+NOAA Fisheries, Northwest Fisheries Science Center
+
+2725 Montlake Blvd. E, Seattle, WA  98112
+
+Office: (206) 860-3478
